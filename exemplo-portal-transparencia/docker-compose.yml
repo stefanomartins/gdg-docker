@@ -1,0 +1,64 @@
+version: '3'
+volumes:
+  firebird-data:
+
+networks:
+  banco:
+  backend:
+  web:
+
+services:
+  firebird:
+    image: jacobalberty/firebird:2.5.8-sc
+    # restart: always
+    networks:
+      - banco    
+    volumes: 
+      - firebird-data:/firebird/data
+      - ./firebird/siap2000_pm_silveiras.fdb:/firebird/data/siap2000_pm_silveiras.fdb
+      - ./firebird/tbudf.so:/usr/local/firebird/UDF/tbudf.so
+      - ./firebird/aliases.conf:/firebird/etc/aliases.conf
+    environment:
+      - TZ=America/Sao_Paulo
+      - ISC_PASSWORD=masterkey
+
+  portal_antigo:
+    build: portal_antigo
+    # restart: always
+    networks:
+      - backend
+      - banco
+    depends_on:
+      - firebird
+    volumes:
+      - ./portal_antigo/public_html:/var/www/html
+      - ./portal_antigo/clientes.xml:/var/www/html/egov/siap-lib/clientes.xml
+      - ./portal_antigo/charset.conf:/etc/apache2/conf-available/charset.conf
+
+  portal_novo:
+    build: portal_novo
+    # restart: always
+    networks:
+      - backend
+      - banco
+    depends_on:
+      - firebird
+    volumes:
+      - ./portal_novo/public_html:/var/www/html
+      - ./portal_novo/clientes.xml:/var/www/html/geosiap/siapegov/clientes.xml
+      - ./portal_novo/charset.conf:/etc/apache2/conf-available/charset.conf
+
+  proxy:
+    image: nginx:1.13
+    # restart: always
+    networks:
+      - web
+      - backend
+    depends_on:
+      - firebird
+      - portal_novo
+      - portal_antigo
+    volumes:
+      - ./proxy/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80 
