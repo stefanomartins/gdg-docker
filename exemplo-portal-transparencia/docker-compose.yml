@@ -2,17 +2,10 @@ version: '3'
 volumes:
   firebird-data:
 
-networks:
-  banco:
-  backend:
-  web:
-
 services:
   firebird:
     image: jacobalberty/firebird:2.5.8-sc
     # restart: always
-    networks:
-      - banco    
     volumes: 
       - firebird-data:/firebird/data
       - ./firebird/siap2000_pm_silveiras.fdb:/firebird/data/siap2000_pm_silveiras.fdb
@@ -25,9 +18,6 @@ services:
   portal_antigo:
     build: portal_antigo
     # restart: always
-    networks:
-      - backend
-      - banco
     depends_on:
       - firebird
     volumes:
@@ -38,9 +28,6 @@ services:
   portal_novo:
     build: portal_novo
     # restart: always
-    networks:
-      - backend
-      - banco
     depends_on:
       - firebird
     volumes:
@@ -51,9 +38,6 @@ services:
   proxy:
     image: nginx:1.13
     # restart: always
-    networks:
-      - web
-      - backend
     depends_on:
       - firebird
       - portal_novo
