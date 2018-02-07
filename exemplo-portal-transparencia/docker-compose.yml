@@ -24,9 +24,6 @@ services:
       - ./portal_antigo/public_html:/var/www/html
       - ./portal_antigo/clientes.xml:/var/www/html/egov/siap-lib/clientes.xml
       - ./portal_antigo/clientes.xml:/var/www/html/geosiap/siapegov/clientes.xml
-      - ./portal_antigo/charset.conf:/etc/apache2/conf-available/charset.conf
-      - ./portal_antigo/default_charset.ini:/usr/local/etc/php/conf.d/default_charset.ini
-      - ./portal_antigo/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       
   proxy:
     image: nginx:1.13
