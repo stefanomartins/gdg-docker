@@ -11,7 +11,7 @@
           <host>firebird</host>
           <username>SYSDBA</username>
           <password>=AFVx4mVGR2cW1mVhFWRal2VFB3cUZlThFGbWpXVsRGa</password>
-          <dbname>siap2000_pm_silveiras</dbname>
+          <dbname>/firebird/data/siap2000_pm_silveiras.fdb</dbname>
           <adapterNamespace>ZendX_Db_Adapter</adapterNamespace>
         </params>
       </db>

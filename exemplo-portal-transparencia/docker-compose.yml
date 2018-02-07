@@ -10,7 +10,7 @@ services:
       - firebird-data:/firebird/data
       - ./firebird/siap2000_pm_silveiras.fdb:/firebird/data/siap2000_pm_silveiras.fdb
       - ./firebird/tbudf.so:/usr/local/firebird/UDF/tbudf.so
-      - ./firebird/aliases.conf:/firebird/etc/aliases.conf
+      # - ./firebird/aliases.conf:/firebird/etc/aliases.conf
     environment:
       - TZ=America/Sao_Paulo
       - ISC_PASSWORD=masterkey
@@ -23,26 +23,20 @@ services:
     volumes:
       - ./portal_antigo/public_html:/var/www/html
       - ./portal_antigo/clientes.xml:/var/www/html/egov/siap-lib/clientes.xml
+      - ./portal_antigo/clientes.xml:/var/www/html/geosiap/siapegov/clientes.xml
       - ./portal_antigo/charset.conf:/etc/apache2/conf-available/charset.conf
-
-  portal_novo:
-    build: portal_novo
-    # restart: always
-    depends_on:
-      - firebird
-    volumes:
-      - ./portal_novo/public_html:/var/www/html
-      - ./portal_novo/clientes.xml:/var/www/html/geosiap/siapegov/clientes.xml
-      - ./portal_novo/charset.conf:/etc/apache2/conf-available/charset.conf
-
+      - ./portal_antigo/default_charset.ini:/usr/local/etc/php/conf.d/default_charset.ini
+      - ./portal_antigo/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      
   proxy:
     image: nginx:1.13
     # restart: always
     depends_on:
       - firebird
-      - portal_novo
       - portal_antigo
     volumes:
       - ./proxy/default.conf:/etc/nginx/conf.d/default.conf
+      - ./proxy/proxy_params:/etc/nginx/conf.d/proxy_params
+      - ./proxy/mime.types:/etc/nginx/mime.types
     ports:
       - 80:80 
